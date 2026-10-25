@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="theme-color" content="#07101d" />
+  <meta name="description" content="Mapa ao vivo da apuração presidencial de 2026 por estado, com dados oficiais do TSE atualizados a cada minuto." />
+  <meta property="og:title" content="Mapa da apuração 2026 • Lula x Flávio Bolsonaro" />
+  <meta property="og:description" content="Acompanhe qual candidato lidera em cada estado, com dados oficiais do TSE atualizados a cada minuto." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
+  <title>Mapa da Apuração 2026 • Ao vivo</title>
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="icon" href="./icon.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://resultados.tse.jus.br" />
+  <link rel="stylesheet" href="./styles.css?v=4" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand-block">
+        <p class="eyebrow">ELEIÇÕES 2026 • 2º TURNO</p>
+        <h1>Mapa da apuração</h1>
+        <p class="subtitle">Lula (13) × Flávio Bolsonaro (22) • dados oficiais do TSE, sem projeções.</p>
+      </div>
+
+      <div class="top-actions">
+        <div class="status-wrap" aria-live="polite">
+          <span class="live-dot" aria-hidden="true"></span>
+          <div>
+            <strong id="statusText">Conectando ao TSE…</strong>
+            <small id="statusDetail">Atualização automática a cada 60 segundos</small>
+          </div>
+        </div>
+        <div class="share-actions">
+          <button id="shareBtn" class="share-btn" type="button">Compartilhar</button>
+          <button id="whatsappBtn" class="whatsapp-btn" type="button">WhatsApp</button>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero-grid">
+        <article class="panel national-panel">
+          <div class="panel-head">
+            <div>
+              <span class="section-kicker">PRESIDENTE • BRASIL</span>
+              <h2>Apuração nacional</h2>
+            </div>
+            <button id="refreshBtn" class="refresh-btn" type="button">Atualizar agora</button>
+          </div>
+
+          <div class="progress-wrap" aria-label="Progresso da totalização">
+            <div class="progress-meta">
+              <span>Seções totalizadas</span>
+              <strong id="nationalProgress">—</strong>
+            </div>
+            <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
+            <div class="progress-foot">
+              <span id="sectionsCount">—</span>
+              <span id="tseTimestamp">TSE: —</span>
+            </div>
+          </div>
+
+          <div id="candidateCards" class="candidate-grid" aria-live="polite">
+            <div class="skeleton card-skeleton"></div>
+            <div class="skeleton card-skeleton"></div>
+          </div>
+
+          <div class="vote-stats">
+            <div><span>Votos válidos</span><strong id="validVotes">—</strong></div>
+            <div><span>Brancos</span><strong id="blankVotes">—</strong></div>
+            <div><span>Nulos</span><strong id="nullVotes">—</strong></div>
+            <div><span>Comparecimento</span><strong id="turnout">—</strong></div>
+          </div>
+        </article>
+
+        <article class="panel map-panel">
+          <div class="panel-head map-head">
+            <div>
+              <span class="section-kicker">MAPA DO BRASIL</span>
+              <h2>Quem lidera em cada estado</h2>
+            </div>
+            <div id="countdown" class="countdown">Próxima atualização: —</div>
+          </div>
+
+          <div id="stateLeaderSummary" class="state-leader-summary" aria-live="polite">
+            <div class="leader-counter loading-counter">Carregando líderes por UF…</div>
+          </div>
+
+          <div id="mapLegend" class="legend" aria-label="Legenda do mapa"></div>
+          <p class="map-note">A cor mostra quem está <strong>liderando naquele momento</strong> em cada UF. Toque no estado para ver os percentuais.</p>
+
+          <div class="map-layout">
+            <div class="map-stage">
+              <svg id="brazilMap" viewBox="0 0 620 600" role="img" aria-label="Mapa do Brasil por unidade da federação"></svg>
+              <div id="mapLoading" class="map-loading">Carregando mapa e resultados…</div>
+            </div>
+
+            <aside id="statePanel" class="state-panel" aria-live="polite">
+              <span class="section-kicker">DETALHE DA UF</span>
+              <h3 id="stateName">Selecione um estado</h3>
+              <p id="stateHint">Toque em uma UF no mapa para ver a apuração presidencial local.</p>
+              <div id="stateResults" class="state-results"></div>
+            </aside>
+          </div>
+        </article>
+      </section>
+
+      <details class="panel table-panel">
+        <summary>
+          <span>
+            <span class="section-kicker">VISÃO COMPLETA</span>
+            <strong>Ver resultado das 27 UFs</strong>
+          </span>
+          <span class="summary-hint">Abrir tabela</span>
+        </summary>
+        <div class="table-content">
+          <div class="table-tools">
+            <input id="stateSearch" class="search" type="search" placeholder="Buscar estado ou UF…" aria-label="Buscar estado" />
+          </div>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>UF</th>
+                  <th>Líder</th>
+                  <th>Percentual</th>
+                  <th>Votos</th>
+                  <th>Seções</th>
+                </tr>
+              </thead>
+              <tbody id="statesTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </details>
+
+      <section id="errorBox" class="error-box" hidden>
+        <strong>Não foi possível atualizar os dados.</strong>
+        <span id="errorMessage">O painel tentará novamente automaticamente.</span>
+      </section>
+    </main>
+
+    <footer>
+      <p><strong>Painel independente.</strong> Não possui vínculo institucional com o TSE. Os números são reproduzidos sem projeções ou estimativas.</p>
+      <p>Fonte: <a href="https://resultados.tse.jus.br" target="_blank" rel="noreferrer">Resultados TSE</a> • atualização automática a cada 60 s.</p>
+    </footer>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((registration) => registration.unregister());
+      }).catch(() => {});
+    }
+  </script>
+  <script src="./app.js?v=4"></script>
+</body>
+</html>

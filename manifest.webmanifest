@@ -1,0 +1,19 @@
+{
+  "name": "Mapa da Apuração 2026",
+  "short_name": "Apuração 2026",
+  "description": "Mapa ao vivo da apuração presidencial de 2026 por estado, com dados oficiais do TSE.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#07101d",
+  "theme_color": "#07101d",
+  "lang": "pt-BR",
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
